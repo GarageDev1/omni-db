@@ -209,12 +209,20 @@ def health(db: Session = Depends(get_db)):
     except Exception:
         checks["db"] = "error"
 
+    return checks
+
+
+@app.get("/health/dependencies")
+def health_dependencies(db: Session = Depends(get_db)):
+    checks = health(db)
+
     # Neo4j check
     try:
         from neo4j import GraphDatabase
         driver = GraphDatabase.driver(
             settings.neo4j_uri,
             auth=(settings.neo4j_user, settings.neo4j_password),
+            connection_timeout=1,
         )
         driver.verify_connectivity()
         driver.close()
