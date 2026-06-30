@@ -26,6 +26,9 @@ from app.routers.v2 import mappings as mappings_v2
 from app.routers.v2 import incremental as incremental_v2
 from app.routers.v2 import logic_actions as logic_actions_v2
 
+def _cors_origins() -> list[str]:
+    return [origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()]
+
 def _seed_db():
     from app.services.auth_service import seed_admin
     from app.models.rules_config import RulesConfig
@@ -60,6 +63,15 @@ def _seed_db():
             if "canonical_id" not in entity_columns:
                 conn.execute(text("ALTER TABLE entities ADD COLUMN canonical_id VARCHAR(200)"))
                 conn.commit()
+            user_columns = {col["name"] for col in inspect(conn).get_columns("users")}
+            for stmt in [
+                ("casdoor_id", "ALTER TABLE users ADD COLUMN casdoor_id VARCHAR(100)"),
+                ("display_name", "ALTER TABLE users ADD COLUMN display_name VARCHAR(100)"),
+                ("avatar", "ALTER TABLE users ADD COLUMN avatar VARCHAR(500)"),
+            ]:
+                if stmt[0] not in user_columns:
+                    conn.execute(text(stmt[1]))
+                    conn.commit()
             for stmt in [
                 "ALTER TABLE model_configs ADD COLUMN config_type VARCHAR(30) DEFAULT 'llm'",
                 "ALTER TABLE model_configs ADD COLUMN options JSON DEFAULT '{}'",
@@ -141,7 +153,7 @@ app = FastAPI(title="OntoPrompt API", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

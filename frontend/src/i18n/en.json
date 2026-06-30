@@ -66,7 +66,13 @@
     "no_account": "No account?",
     "have_account": "Have an account?",
     "login_error": "Invalid username or password",
-    "network_error": "Network error — please verify the backend service is running"
+    "network_error": "Network error - please verify the backend service is running",
+    "or": "or",
+    "casdoor_login": "Continue with Casdoor",
+    "casdoor_callback_title": "Completing sign-in",
+    "casdoor_callback_error": "Casdoor sign-in failed. Please try again.",
+    "casdoor_state_error": "Sign-in state check failed. Please sign in again.",
+    "casdoor_missing_code": "The sign-in callback is missing an authorization code"
   },
   "ontology": {
     "title": "Ontology Management",
@@ -276,6 +282,8 @@
     "email_optional": "Email (optional)",
     "password_required": "Password *",
     "role_user": "User",
+    "role_viewer": "Viewer",
+    "role_editor": "Editor",
     "role_admin": "Admin",
     "creating": "Creating...",
     "confirm_create": "Create",

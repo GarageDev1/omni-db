@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/authStore'
 import Layout from '@/components/Layout'
 import LoginPage from '@/pages/login/LoginPage'
+import CasdoorCallbackPage from '@/pages/login/CasdoorCallbackPage'
 import RegisterPage from '@/pages/register/RegisterPage'
 import OverviewPage from '@/pages/overview/OverviewPage'
 import OntologyListPage from '@/pages/ontologies/list/OntologyListPage'
@@ -38,6 +39,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/auth/callback" element={<CasdoorCallbackPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<Navigate to="/overview" replace />} />
           <Route path="/overview" element={<ProtectedRoute><OverviewPage /></ProtectedRoute>} />

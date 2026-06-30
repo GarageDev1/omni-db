@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { authApi } from '@/api/auth'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { CasdoorConfig } from '@/types/auth'
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<{ username: string; password: string }>()
@@ -12,6 +13,13 @@ export default function LoginPage() {
   const { t } = useTranslation()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [casdoor, setCasdoor] = useState<CasdoorConfig | null>(null)
+
+  useEffect(() => {
+    authApi.casdoorConfig()
+      .then(setCasdoor)
+      .catch(() => setCasdoor(null))
+  }, [])
 
   const onSubmit = async (data: { username: string; password: string }) => {
     setLoading(true)
@@ -29,6 +37,22 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const startCasdoorLogin = () => {
+    if (!casdoor?.enabled) return
+    const redirectUri = casdoor.redirect_uri || `${window.location.origin}/auth/callback`
+    const state = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`
+    sessionStorage.setItem('casdoor_oauth_state', state)
+    sessionStorage.setItem('casdoor_oauth_redirect_uri', redirectUri)
+    const params = new URLSearchParams({
+      client_id: casdoor.client_id,
+      response_type: 'code',
+      redirect_uri: redirectUri,
+      scope: casdoor.scope || 'openid profile email',
+      state,
+    })
+    window.location.assign(`${casdoor.endpoint.replace(/\/$/, '')}/login/oauth/authorize?${params}`)
   }
 
   return (
@@ -53,6 +77,19 @@ export default function LoginPage() {
             {loading ? t('common.loading') : t('auth.login')}
           </button>
         </form>
+        {casdoor?.enabled && (
+          <>
+            <div className="flex items-center gap-3 my-5">
+              <div className="h-px flex-1 bg-gray-200" />
+              <span className="text-xs text-gray-400">{t('auth.or')}</span>
+              <div className="h-px flex-1 bg-gray-200" />
+            </div>
+            <button type="button" onClick={startCasdoorLogin}
+              className="w-full border border-gray-300 rounded-lg py-2 text-sm font-medium hover:bg-gray-50">
+              {t('auth.casdoor_login')}
+            </button>
+          </>
+        )}
         <p className="mt-4 text-sm text-center text-gray-500">
           {t('auth.no_account')} <Link to="/register" className="text-black underline">{t('auth.register')}</Link>
         </p>

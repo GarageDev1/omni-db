@@ -16,3 +16,8 @@ class RegisterRequest(BaseModel):
 class PasswordChangeRequest(BaseModel):
     current_password: str
     new_password: str
+
+class CasdoorCallbackRequest(BaseModel):
+    code: str
+    state: str | None = None
+    redirect_uri: str | None = None

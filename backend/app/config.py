@@ -4,6 +4,7 @@ class Settings(BaseSettings):
     environment: str = "development"  # development | production
     database_url: str = "sqlite:///./ontoprompt.db"
     redis_url: str = "redis://localhost:6379/0"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     secret_key: str = "dev-secret-key"
     encryption_key: str = ""
     first_admin_user: str = "admin"
@@ -29,6 +30,17 @@ class Settings(BaseSettings):
     # v2 — ChromaDB
     chroma_host: str = "localhost"
     chroma_port: int = 8001
+
+    # Casdoor SSO
+    casdoor_endpoint: str = ""
+    casdoor_client_id: str = ""
+    casdoor_client_secret: str = ""
+    casdoor_redirect_uri: str = ""
+    casdoor_scope: str = "openid profile email"
+    casdoor_org_name: str = ""
+    casdoor_app_name: str = ""
+    casdoor_admin_roles: str = "admin,omni-admin"
+    casdoor_editor_roles: str = "editor,omni-editor"
 
     model_config = {"env_file": ".env"}
 
