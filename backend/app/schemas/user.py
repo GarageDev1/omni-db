@@ -7,6 +7,8 @@ class UserOut(BaseModel):
     username: str
     email: str
     role: str
+    display_name: Optional[str] = None
+    avatar: Optional[str] = None
     is_active: bool
     created_at: datetime
 

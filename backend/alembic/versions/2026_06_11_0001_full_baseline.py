@@ -36,10 +36,14 @@ def upgrade() -> None:
     sa.Column('email', sa.String(length=200), nullable=False),
     sa.Column('password_hash', sa.String(), nullable=False),
     sa.Column('role', sa.String(length=20), nullable=False),
+    sa.Column('casdoor_id', sa.String(length=100), nullable=True),
+    sa.Column('display_name', sa.String(length=100), nullable=True),
+    sa.Column('avatar', sa.String(length=500), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('casdoor_id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
     )
